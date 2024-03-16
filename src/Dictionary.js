@@ -4,8 +4,8 @@ import Results from "./Results";
 import Photos from "./Photos";
 import "./Dictionary.css";
 
-export default function Dictionary() {
-  let [keyword, setKeyword] = useState("");
+export default function Dictionary(props) {
+  let [keyword, setKeyword] = useState(props.defaultKeyword);
   let [results, setResults] = useState(null);
   let [loaded, setLoaded] = useState(false);
   let [photos, setPhotos] = useState(null);
@@ -19,14 +19,14 @@ export default function Dictionary() {
   }
 
   function search() {
-    // documentation: https://dictionaryapi.dev/
-    let apiUrl = `https://api.dictionaryapi.dev/api/v2/entries/en/${keyword}`;
+    // documentation: https://dictionaryapi.dev/e
+    let apiUrl = `https://api.dictionaryapi.dev/api/v2/entries/en_US/${keyword}`;
     axios.get(apiUrl).then(handleDictionaryResponse);
 
     let pexelsApiKey =
       "yI4TUEqhvpjCwM7g3UQaxEWmhsdiieeGk5Y9ckiWkuymJfcGiVD2cXM4";
     let pexelsApiUrl = `https://api.pexels.com/v1/search?query=${keyword}&per_page=9`;
-    let headers = { Authorization: `Bearer ${pexelsApiKey}` };
+    let headers = { Authorization: `${pexelsApiKey}` };
     axios.get(pexelsApiUrl, { headers: headers }).then(handlePexelsResponse);
   }
 
@@ -50,10 +50,14 @@ export default function Dictionary() {
         <section>
           <h1>What word do you want to look up?</h1>
           <form onSubmit={handleSubmit}>
-            <input type="search" onChange={handleKeywordChange} />
+            <input
+              type="search"
+              onChange={handleKeywordChange}
+              defaultValue={props.defaultKeyword}
+            />
           </form>
           <div className="hint">
-            suggested words: sunset, wine, yoga, dog...
+            suggested words: sunset, wine, yoga, plant...
           </div>
         </section>
         <Results results={results} />
@@ -62,6 +66,6 @@ export default function Dictionary() {
     );
   } else {
     load();
-    return "Loading..";
+    return "Loading";
   }
 }
